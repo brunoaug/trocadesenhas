@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solicitação de Mudança de Senha</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --laranja: #FF6B00;
+      --laranja-claro: #FF8C33;
+      --branco: #FFFFFF;
+      --cinza-leve: #F9F9F9;
+      --cinza-borda: #EAEAEA;
+      --texto: #1A1A1A;
+      --texto-suave: #666666;
+      --verde: #28A745;
+      --verde-bg: #EAFAF1;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--branco);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'DM Sans', sans-serif;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 90% 10%, #FFE8D6 0%, transparent 55%),
+        radial-gradient(ellipse 60% 50% at 0% 90%, #FFF0E6 0%, transparent 50%);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .geo-circle { position: fixed; border-radius: 50%; border: 2px solid rgba(255,107,0,0.12); pointer-events: none; z-index: 0; }
+    .geo-circle.c1 { width: 400px; height: 400px; top: -120px; right: -120px; }
+    .geo-circle.c2 { width: 260px; height: 260px; bottom: -60px; left: -60px; border-color: rgba(255,107,0,0.08); }
+    .geo-circle.c3 { width: 160px; height: 160px; top: 50%; left: -40px; border-color: rgba(255,107,0,0.06); }
+
+    .wrapper {
+      position: relative; z-index: 1; width: 100%; max-width: 500px;
+      animation: aparecer 0.7s cubic-bezier(.22,1,.36,1) both;
+    }
+
+    @keyframes aparecer {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .card {
+      background: var(--branco);
+      border-radius: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06), 0 12px 40px rgba(255,107,0,0.12), 0 0 0 1px rgba(255,107,0,0.08);
+      overflow: hidden;
+    }
+
+    .card-top {
+      background: linear-gradient(135deg, var(--laranja) 0%, var(--laranja-claro) 100%);
+      padding: 36px 40px 32px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-top::after {
+      content: '';
+      position: absolute;
+      width: 220px; height: 220px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+      top: -80px; right: -60px;
+      pointer-events: none;
+    }
+
+    .card-top-inner { position: relative; z-index: 1; }
+
+    .badge-seguro {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 12px;
+      background: rgba(255,255,255,0.18);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 20px;
+      font-size: 11px; font-family: 'Sora', sans-serif; font-weight: 600;
+      color: #fff; letter-spacing: 0.8px; text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+
+    .badge-seguro svg { width: 13px; height: 13px; fill: #fff; }
+
+    h1 {
+      font-family: 'Sora', sans-serif; font-size: 26px; font-weight: 800;
+      color: #fff; letter-spacing: -0.5px; line-height: 1.2; margin-bottom: 8px;
+    }
+
+    .subtitulo { font-size: 14px; color: rgba(255,255,255,0.82); line-height: 1.6; }
+
+    .card-body { padding: 36px 40px 40px; }
+
+    .form-group { margin-bottom: 22px; }
+
+    label {
+      display: block; font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 700;
+      color: var(--texto-suave); letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 8px;
+    }
+
+    .input-wrapper { position: relative; }
+
+    .input-icon {
+      position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+      display: flex; align-items: center; pointer-events: none; transition: color 0.25s;
+    }
+
+    .input-icon svg {
+      width: 18px; height: 18px; stroke: #C0C0C0; fill: none;
+      stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: stroke 0.25s;
+    }
+
+    input, select {
+      width: 100%; padding: 13px 14px 13px 44px;
+      border: 2px solid var(--cinza-borda); border-radius: 12px;
+      font-size: 15px; font-family: 'DM Sans', sans-serif;
+      background: var(--cinza-leve); color: var(--texto);
+      transition: all 0.25s ease; appearance: none; -webkit-appearance: none;
+    }
+
+    input:focus, select:focus {
+      outline: none; border-color: var(--laranja); background: #fff;
+      box-shadow: 0 0 0 4px rgba(255,107,0,0.1);
+    }
+
+    .form-group:focus-within label { color: var(--laranja); }
+    .form-group:focus-within .input-icon svg { stroke: var(--laranja); }
+    input::placeholder { color: #BBBBBB; }
+    select { cursor: pointer; color: var(--texto); }
+
+    .select-arrow { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); pointer-events: none; }
+    .select-arrow svg { width: 16px; height: 16px; stroke: #999; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    .btn-enviar {
+      width: 100%; padding: 16px; border: none; border-radius: 12px;
+      background: linear-gradient(135deg, var(--laranja) 0%, var(--laranja-claro) 100%);
+      color: #fff; font-family: 'Sora', sans-serif; font-size: 15px; font-weight: 700;
+      letter-spacing: 0.5px; cursor: pointer; position: relative; overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 18px rgba(255,107,0,0.35); margin-top: 6px;
+    }
+
+    .btn-enviar::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.18) 50%, transparent 100%);
+      transform: translateX(-100%); transition: transform 0.5s ease;
+    }
+
+    .btn-enviar:hover::after { transform: translateX(100%); }
+    .btn-enviar:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(255,107,0,0.4); }
+    .btn-enviar:active { transform: translateY(0); }
+
+    .success-msg {
+      display: none; margin-top: 20px; padding: 16px 20px;
+      background: var(--verde-bg); border: 2px solid #A8E6BD; border-radius: 12px;
+      color: var(--verde); font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 600;
+      text-align: center; animation: slideDown 0.4s cubic-bezier(.22,1,.36,1);
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .success-icon {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 22px; height: 22px; background: var(--verde); border-radius: 50%;
+      margin-right: 8px; vertical-align: middle;
+    }
+
+    .success-icon svg { width: 12px; height: 12px; stroke: #fff; fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+
+    .card-footer {
+      text-align: center; padding: 0 40px 28px; font-size: 12px; color: #BBBBBB;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+    }
+
+    .card-footer span { display: inline-block; width: 4px; height: 4px; border-radius: 50%; background: var(--laranja); opacity: 0.5; }
+
+    @media (max-width: 480px) {
+      .card-top, .card-body { padding-left: 24px; padding-right: 24px; }
+      .card-footer { padding-left: 24px; padding-right: 24px; }
+      h1 { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="geo-circle c1"></div>
+  <div class="geo-circle c2"></div>
+  <div class="geo-circle c3"></div>
+
+  <div class="wrapper">
+    <div class="card">
+
+      <div class="card-top">
+        <div class="card-top-inner">
+          <div class="badge-seguro">
+            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Conexão Segura
+          </div>
+          <h1>Solicitação de<br>Mudança de Senha</h1>
+          <p class="subtitulo">Preencha os dados abaixo para solicitar a alteração de acesso na plataforma desejada.</p>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <form
+          action="https://script.google.com/macros/s/AKfycbyzL_Yh5BR0I-6hjzu0VruG5rK9I-UPZAIGaYaG4pRKo6VrZ66qT_v7Z2n8WEo7ef3uWA/exec"
+          method="GET"
+          target="hiddenFrame"
+          onsubmit="enviado()"
+        >
+
+          <div class="form-group">
+            <label for="nome_tecnico">Nome do Técnico</label>
+            <div class="input-wrapper">
+              <span class="input-icon">
+                <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              </span>
+              <input type="text" id="nome_tecnico" name="nome_tecnico" placeholder="Digite o nome completo" required autocomplete="off">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="numero_tecnico">Número do Técnico</label>
+            <div class="input-wrapper">
+              <span class="input-icon">
+                <svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+              </span>
+              <input type="text" id="numero_tecnico" name="numero_tecnico" placeholder="Ex: 12345" required autocomplete="off">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="plataforma">Plataforma</label>
+            <div class="input-wrapper">
+              <span class="input-icon">
+                <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              </span>
+              <select id="plataforma" name="plataforma" required>
+                <option value="" disabled selected>Selecione a plataforma</option>
+                <option value="Vivo Empresas">Vivo Empresas</option>
+                <option value="Portal do Técnico">Portal do Técnico</option>
+                <option value="SAP">SAP</option>
+                <option value="Salesforce">Salesforce</option>
+                <option value="VPN Corporativa">VPN Corporativa</option>
+                <option value="Active Directory">Active Directory</option>
+                <option value="Outra">Outra</option>
+              </select>
+              <span class="select-arrow">
+                <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+              </span>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-enviar">Enviar Solicitação</button>
+        </form>
+
+        <div class="success-msg" id="successMessage">
+          <span class="success-icon">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </span>
+          Solicitação enviada com sucesso!
+        </div>
+      </div>
+
+      <div class="card-footer">
+        TI Corporativo
+        <span></span>
+        Sistema de Chamados
+        <span></span>
+        Uso Interno
+      </div>
+
+    </div>
+  </div>
+
+  <iframe name="hiddenFrame" style="display:none;"></iframe>
+
+  <script>
+    function enviado() {
+      const msg = document.getElementById('successMessage');
+      msg.style.display = 'block';
+      setTimeout(() => { document.querySelector('form').reset(); }, 300);
+      setTimeout(() => { msg.style.display = 'none'; }, 5000);
+      return true;
+    }
+  </script>
+
+</body>
+</html>
